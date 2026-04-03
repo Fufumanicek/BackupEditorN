@@ -18,7 +18,7 @@ namespace BackupEditorN
             _running = true;
             _activeWindow = window;
 
-            Console.Title = "GradeRegister Admin [v1.0]";
+            Console.Title = "BackupEditorApp [v6.7]";
             Console.CursorVisible = false;
             Console.Clear();
 
