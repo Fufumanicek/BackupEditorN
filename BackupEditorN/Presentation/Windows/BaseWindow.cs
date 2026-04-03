@@ -39,7 +39,7 @@ namespace BackupEditorN.Presentation.Windows
             }
         }
 
-        public void HandleKey(ConsoleKeyInfo keyInfo)
+        public virtual void HandleKey(ConsoleKeyInfo keyInfo)
         {
             if (keyInfo.Key == ConsoleKey.Escape)
             {
