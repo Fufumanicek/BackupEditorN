@@ -7,4 +7,12 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\P3ABackupN\P3ABackupN\P3ABackupN.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Presentation\" />
+    </ItemGroup>
+
 </Project>
