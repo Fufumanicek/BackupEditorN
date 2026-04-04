@@ -4,7 +4,7 @@
     {
         public override bool Selectable => false;
 
-        private string _text;
+        public string _text;
 
         public Label(string text, bool inline = false)
             : base(inline)
