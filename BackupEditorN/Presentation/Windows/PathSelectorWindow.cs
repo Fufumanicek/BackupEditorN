@@ -1,7 +1,7 @@
 ﻿using BackupEditorN.Presentation.Components;
 namespace BackupEditorN.Presentation.Windows;
 
-public class PathSelectorWindow
+public class PathSelectorWindow : BaseWindow
 {
     //data
     private List<string> _selectedPaths { get; set; }
@@ -14,7 +14,7 @@ public class PathSelectorWindow
     
     public List<string> ResultPaths { get; private set;}
     
-    public PathSelectorWindow(string title, List<string> currentPaths, Application app, IWindow returnWindow)
+    public PathSelectorWindow(string title, List<string> currentPaths, Application app, IWindow returnWindow):base(title, app, returnWindow)
     {
         
     }
