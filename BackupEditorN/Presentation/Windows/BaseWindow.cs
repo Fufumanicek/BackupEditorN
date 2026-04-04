@@ -60,8 +60,18 @@ namespace BackupEditorN.Presentation.Windows
         {
             _components.Add(component);
 
-            if (!_components[_selectedIndex].Selectable)
+            // Find the first selectable component starting from index 0
+            _selectedIndex = 0;
+            while (_selectedIndex < _components.Count && !_components[_selectedIndex].Selectable)
+            {
                 _selectedIndex++;
+            }
+            
+            // If no selectable component found, reset to 0 (will be caught by HandleKey)
+            if (_selectedIndex >= _components.Count)
+            {
+                _selectedIndex = 0;
+            }
         }
 
         protected void Close()
