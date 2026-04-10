@@ -1,4 +1,5 @@
-﻿using BackupEditorN.Presentation.Components;
+﻿using System.Collections.Generic;
+using BackupEditorN.Presentation.Components;
 using P3ABackupN.Enums;
 using P3ABackupN.Models;
 using BackupEditorN.Services;
@@ -6,7 +7,7 @@ using System.IO;
 
 namespace BackupEditorN.Presentation.Windows;
 
-// Wrapper třída pro zobrazení jobů v tabulce (bez sources a targets)
+// Wrapper třída pro zobrazení jobů v tabulce
 public class JobDisplayItem
 {
     public string JobName { get; set; }
@@ -31,9 +32,10 @@ public class MainWindow : BaseWindow
     private Button _editJobButton { get; set; }
     private Button _deleteJobButton { get; set; }
     private Button _saveButton { get; set; }
+    private Button _loadButton { get; set; }
     private TextBox _configPathBox { get; set; }
     
-    public MainWindow(EditorConfigurationService editorConfigurationService, Application app) : base("Backup Editor", app)
+    public MainWindow(EditorConfigurationService editorConfigurationService, Application app) : base("Main Window", app)
     {
         EditorConfigurationService = editorConfigurationService;
         _jobs = new List<BackupJob>();
@@ -44,6 +46,7 @@ public class MainWindow : BaseWindow
         _editJobButton = new Button("Edit [Enter]", inline:true, selectable: false);
         _deleteJobButton = new Button("Delete [Del]", inline:true, selectable: false);
         _saveButton = new Button("Save [S]", inline:true, selectable: false);
+        _loadButton = new Button("Load [L]", inline: true, selectable: false);
         
         RegisterComponent(_jobTable);
         RegisterComponent(_detailLabel);
@@ -54,6 +57,7 @@ public class MainWindow : BaseWindow
         RegisterComponent(_editJobButton);
         RegisterComponent(_deleteJobButton);
         RegisterComponent(_saveButton);
+        RegisterComponent(_loadButton);
         LoadJobs();
     }
     
@@ -93,17 +97,17 @@ public class MainWindow : BaseWindow
         }
 
         _detailLabel._text =
-            $"Job Name: {job.JobName ?? "Unnamed"}\n" +
+            $"Job Name: {job.JobName}\n" +
             $"Method: {job.Method}\n" +
             $"Timing: {job.Timing}\n" +
             $"Retention: {job.Retention?.Count} count, {job.Retention?.Size} size\n" +
-            $"Sources: {string.Join(", ", job.Sources ?? new List<string>())}\n" +
-            $"Destination: {string.Join(", ", job.Targets ?? new List<string>())}";
+            $"Sources: {string.Join(", ", job.Sources)}\n" +
+            $"Destination: {string.Join(", ", job.Targets)}";
     }
     
     private void NewButtonClicked()
     {
-        var newJob = new BackupJob()
+        var newJob = new BackupJob
         {
             JobName = "New Backup",
             Sources = new List<string>(),
@@ -167,7 +171,7 @@ public class MainWindow : BaseWindow
             return;
         }
         
-        string configPath = _configPathBox.Value ?? "config.json";
+        string configPath = _configPathBox.Value;
         string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", configPath);
         
         try
@@ -187,6 +191,43 @@ public class MainWindow : BaseWindow
         {
             _detailLabel._text = $"Save error: {e.Message}";
         }
+    }
+
+    private void LoadButtonClicked()
+    {
+        var selector = new PathSelectorWindow("Vyberte Config JSON soubor", new List<string>(), _application, this);
+        selector.Submitted += () =>
+        {
+            if (selector.ResultPaths.Count > 0)
+            {
+                string fullPath = selector.ResultPaths[0];
+                if (!fullPath.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                {
+                    _detailLabel._text = "Vyberte prosím JSON soubor.";
+                    return;
+                }
+                try
+                {
+                    _jobs = EditorConfigurationService.LoadFromFile(fullPath);
+                    LoadJobs();
+                    string projectRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", ".."));
+                    if (fullPath.StartsWith(projectRoot, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _configPathBox.Value = Path.GetRelativePath(projectRoot, fullPath);
+                    }
+                    else
+                    {
+                        _configPathBox.Value = Path.GetFileName(fullPath);
+                    }
+                    _detailLabel._text = $"Načteno {_jobs.Count} úloh úspěšně z {fullPath}";
+                }
+                catch (Exception e)
+                {
+                    _detailLabel._text = $"Chyba při načítání: {e.Message}";
+                }
+            }
+        };
+        selector.Show();
     }
 
     public override void HandleKey(ConsoleKeyInfo keyInfo)
@@ -225,6 +266,11 @@ public class MainWindow : BaseWindow
         if (keyInfo.Key == ConsoleKey.S)
         {
             SaveButtonClicked();
+            return;
+        }
+        if (keyInfo.Key == ConsoleKey.L)
+        {
+            LoadButtonClicked();
             return;
         }
         

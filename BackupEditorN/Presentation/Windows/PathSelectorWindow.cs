@@ -181,10 +181,8 @@ public class PathSelectorWindow : BaseWindow
                 entries.Add(new FileEntry { Name = "New folder", IsDirectory = true });
                 entries.Add(new FileEntry { Name = "..", IsDirectory = true });
                 entries.AddRange(Directory.GetDirectories(_currentDir)
-                    .Select(d => new FileEntry { Name = Path.GetFileName(d) ?? d, IsDirectory = true })
+                    .Select(d => new FileEntry { Name = Path.GetFileName(d), IsDirectory = true })
                     .OrderBy(e => e.Name));
-                // V PathSelectorWindow obvykle vybíráme složky, ale TemplateFileExplorer ukazuje i soubory.
-                // Podle zadání "logicky podobně" jako TemplateFileExplorer.
                 entries.AddRange(Directory.GetFiles(_currentDir)
                     .Select(f => new FileEntry { Name = Path.GetFileName(f) ?? f, IsDirectory = false })
                     .OrderBy(e => e.Name));
@@ -223,8 +221,7 @@ public class PathSelectorWindow : BaseWindow
             string inputPrompt = "New folder name: ";
             string inputValue = _newFolderNameBuilder.ToString();
             Console.WriteLine(inputPrompt + inputValue + "_");
-            // V BaseWindow.Render() se vypisují komponenty, ale tady chceme vidět input.
-            // Aby to vypadalo jako v TemplateFileExplorer:
+
             Console.WriteLine("Chars/-._ : type, Backspace: del, Enter: create, Esc: cancel");
         }
         else

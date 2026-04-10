@@ -49,7 +49,6 @@ public class JobEditWindow : BaseWindow
         _job = job;
         _cronValidator = new CronValidator();
 
-        // Inicializace editovatelných polí pro informace o jobu
         _jobNameBox = new TextBox("Job Name: ");
         _methodBox = new TextBox("Method: ");
         _timingBox = new TextBox("Timing: ");
@@ -58,7 +57,7 @@ public class JobEditWindow : BaseWindow
         _retentionCountBox = new TextBox("Retention Count: ");
         _retentionSizeBox = new TextBox("Retention Size: ");
         
-        // Inicializace tabulek pro cesty
+
         _sourcesHeaderLabel = new Label("Sources:");
         _sourcesTable = new Table<PathItem>(3);
         _editSourceButton = new Button("Edit Sources");
@@ -71,7 +70,7 @@ public class JobEditWindow : BaseWindow
         _cancelButton = new Button("Cancel", inline: true);
         _errorLabel = new Label("");
 
-        // Registrace komponent - editovatelná pole pro informace
+
         RegisterComponent(_jobNameBox);
         RegisterComponent(_methodBox);
         RegisterComponent(_timingBox);
@@ -80,17 +79,17 @@ public class JobEditWindow : BaseWindow
         RegisterComponent(_retentionCountBox);
         RegisterComponent(_retentionSizeBox);
         
-        // Registrace komponent - sources tabulka
+
         RegisterComponent(_sourcesHeaderLabel);
         RegisterComponent(_sourcesTable);
         RegisterComponent(_editSourceButton);
         
-        // Registrace komponent - targets tabulka
+
         RegisterComponent(_targetsHeaderLabel);
         RegisterComponent(_targetsTable);
         RegisterComponent(_editTargetButton);
         
-        // Registrace tlačítek
+
         RegisterComponent(_saveButton);
         RegisterComponent(_cancelButton);
         RegisterComponent(_errorLabel);
