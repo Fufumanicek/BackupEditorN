@@ -124,7 +124,20 @@ namespace BackupEditorN.Presentation.Components
         {
             return type
                 .GetProperties()
-                .Select(p => p.GetValue(obj)?.ToString() ?? string.Empty)
+                .Select(p =>
+                {
+                    var val = p.GetValue(obj);
+                    if (val is System.Collections.IEnumerable enumerable && val is not string)
+                    {
+                        var list = new List<string>();
+                        foreach (var item in enumerable)
+                        {
+                            list.Add(item?.ToString() ?? "null");
+                        }
+                        return string.Join(", ", list);
+                    }
+                    return val?.ToString() ?? string.Empty;
+                })
                 .ToList();
         }
     }

@@ -42,7 +42,7 @@ namespace BackupEditorN
 
         protected void Render()
         {
-            Console.SetCursorPosition(0, 0);
+            Console.Write("\x1b[2J\x1b[H");
             _activeWindow?.Render();
         }
 

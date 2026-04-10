@@ -11,8 +11,8 @@ namespace BackupEditorN.Presentation.Windows
         protected Application _application;
         protected IWindow? _returnWindow;
 
-        private List<IComponent> _components;
-        private int _selectedIndex;
+        protected List<IComponent> _components;
+        protected int _selectedIndex;
 
         protected BaseWindow(string title, Application application, IWindow? returnWindow = null)
         {
@@ -28,7 +28,7 @@ namespace BackupEditorN.Presentation.Windows
             _application.SwitchWindow(this);
         }
 
-        public void Render()
+        public virtual void Render()
         {
             Console.WriteLine($"{_title}\n");
 
