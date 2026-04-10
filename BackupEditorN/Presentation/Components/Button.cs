@@ -5,14 +5,16 @@ namespace BackupEditorN.Presentation.Components
     {
         public event Action? Clicked;
 
-        public override bool Selectable => true;
+        public override bool Selectable => _selectable;
 
         private string _text;
+        private readonly bool _selectable;
 
-        public Button(string text, bool inline = false)
+        public Button(string text, bool inline = false, bool selectable = true)
             : base(inline)
         {
             _text = text;
+            _selectable = selectable;
         }
 
         public override void Render(bool selected)

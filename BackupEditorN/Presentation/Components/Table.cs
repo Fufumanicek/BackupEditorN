@@ -7,6 +7,7 @@ namespace BackupEditorN.Presentation.Components
         where T : class
     {
         public event Action? ItemSelected;
+        public event Action? ItemDeleted;
 
         public override bool Selectable => true;
 
@@ -86,6 +87,10 @@ namespace BackupEditorN.Presentation.Components
             else if (keyInfo.Key == ConsoleKey.Enter)
             {
                 ItemSelected?.Invoke();
+            }
+            else if (keyInfo.Key == ConsoleKey.Delete && Items.Count > 0 && _selectedIndex >= 0 && _selectedIndex < Items.Count)
+            {
+                ItemDeleted?.Invoke();
             }
         }
 
