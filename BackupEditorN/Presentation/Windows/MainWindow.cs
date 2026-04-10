@@ -7,7 +7,7 @@ namespace BackupEditorN.Presentation.Windows;
 
 public class MainWindow : BaseWindow
 {
-    private ConfigurationService _configurationService { get; set; }
+    private EditorConfigurationService EditorConfigurationService { get; set; }
     private List<BackupJob> _jobs { get; set; }
     
     //komponenty
@@ -19,9 +19,9 @@ public class MainWindow : BaseWindow
     private Button _saveButton { get; set; }
     private Button _loadButton { get; set; }
     
-    public MainWindow(ConfigurationService configurationService, Application app) : base("Backup Editor", app)
+    public MainWindow(EditorConfigurationService editorConfigurationService, Application app) : base("Backup Editor", app)
     {
-        _configurationService = configurationService;
+        EditorConfigurationService = editorConfigurationService;
         _jobs = new List<BackupJob>();
         
         _jobTable = new Table<BackupJob>();
@@ -117,7 +117,7 @@ public class MainWindow : BaseWindow
         string path = "config.json";
         try
         {
-            _jobs = _configurationService.LoadFromFile(path);
+            _jobs = EditorConfigurationService.LoadFromFile(path);
         }
         catch (Exception e)
         {
@@ -130,7 +130,7 @@ public class MainWindow : BaseWindow
         string path = "config.json";
         try
         {
-            _configurationService.SaveToFile(path, _jobs);
+            EditorConfigurationService.SaveToFile(path, _jobs);
         }
         catch (Exception e)
         {
@@ -168,9 +168,11 @@ public class MainWindow : BaseWindow
         }
         
         base.HandleKey(keyInfo);
-        RefreshDetail();
+        
+        if (_jobTable.Items.Count > 0)
+        {
+            RefreshDetail();
+        }
     }
-    
-    
 
 }

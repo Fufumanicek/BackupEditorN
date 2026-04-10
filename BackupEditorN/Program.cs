@@ -7,7 +7,7 @@ class Program
 {
     static void Main(string[] args)
     {  
-        var configService = new ConfigurationService();
+        var configService = new EditorConfigurationService();
         var app = new Application();
         var mainWindow = new MainWindow(configService, app);
         app.Run(mainWindow);    

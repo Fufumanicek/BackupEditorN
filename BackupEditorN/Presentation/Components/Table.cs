@@ -10,10 +10,9 @@ namespace BackupEditorN.Presentation.Components
 
         public override bool Selectable => true;
 
-        //public T SelectedItem => Items[_selectedIndex];
-
-        public T? SelectedItem => Items.Count > 0 
-            ? Items[Math.Min(_selectedIndex, Items.Count - 1)] 
+        public T? SelectedItem => 
+            Items != null && Items.Count > 0 && _selectedIndex >= 0 && _selectedIndex < Items.Count
+            ? Items[_selectedIndex] 
             : null;
 
         public List<T> Items { get; set; }

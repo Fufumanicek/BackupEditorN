@@ -3,7 +3,7 @@ using P3ABackupN.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-public class ConfigurationService
+public class EditorConfigurationService
 {
     private static JsonSerializerOptions GetOptions() => new()
     {
