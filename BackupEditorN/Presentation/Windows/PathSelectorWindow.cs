@@ -12,8 +12,6 @@ public class PathSelectorWindow : BaseWindow
     private Button _cancelButton;
 
     private string _currentDir;
-    private bool _creatingNewFolder;
-    private StringBuilder _newFolderNameBuilder;
 
     public List<string> ResultPaths { get; private set; } = new();
 
@@ -34,50 +32,6 @@ public class PathSelectorWindow : BaseWindow
 
         public override void HandleKey(ConsoleKeyInfo keyInfo)
         {
-            if (_window._creatingNewFolder)
-            {
-                var key = keyInfo.Key;
-                var ch = keyInfo.KeyChar;
-                if (key == ConsoleKey.Enter)
-                {
-                    string name = _window._newFolderNameBuilder.ToString().Trim();
-                    if (!string.IsNullOrEmpty(name))
-                    {
-                        string newPath = Path.Combine(_window._currentDir, name);
-                        try
-                        {
-                            Directory.CreateDirectory(newPath);
-                            _window.Refresh();
-                        }
-                        catch
-                        {
-                            Console.Beep();
-                        }
-                    }
-                    _window._creatingNewFolder = false;
-                    _window._newFolderNameBuilder.Clear();
-                    Console.CursorVisible = false;
-                    return;
-                }
-                else if (key == ConsoleKey.Escape)
-                {
-                    _window._creatingNewFolder = false;
-                    _window._newFolderNameBuilder.Clear();
-                    Console.CursorVisible = false;
-                    return;
-                }
-                else if (key == ConsoleKey.Backspace && _window._newFolderNameBuilder.Length > 0)
-                {
-                    _window._newFolderNameBuilder.Length--;
-                    return;
-                }
-                else if (!char.IsControl(ch) && (char.IsLetterOrDigit(ch) || ch == ' ' || ch == '_' || ch == '-' || ch == '.'))
-                {
-                    _window._newFolderNameBuilder.Append(ch);
-                    return;
-                }
-                return;
-            }
 
             switch (keyInfo.Key)
             {
@@ -109,19 +63,6 @@ public class PathSelectorWindow : BaseWindow
                 case ConsoleKey.Enter:
                     var selEntry = SelectedItem as FileEntry;
                     if (selEntry == null) return;
-                    if (selEntry.Name == "New folder")
-                    {
-                        if (string.IsNullOrEmpty(_window._currentDir))
-                        {
-                            Console.Beep();
-                            return;
-                        }
-                        _window._creatingNewFolder = true;
-                        _window._newFolderNameBuilder.Clear();
-                        _window._newFolderNameBuilder.Append("New folder");
-                        Console.CursorVisible = true;
-                        return;
-                    }
                     
                     string fullPath = string.IsNullOrEmpty(_window._currentDir)
                         ? selEntry.Name
@@ -141,8 +82,6 @@ public class PathSelectorWindow : BaseWindow
     {
         _selectedPaths = new List<string>(currentPaths);
         _currentDir = Directory.GetCurrentDirectory();
-        _creatingNewFolder = false;
-        _newFolderNameBuilder = new StringBuilder();
 
         _fileTable = new FilePathTable(this);
         _listPanel = new ListPanel("Selected Paths");
@@ -178,7 +117,6 @@ public class PathSelectorWindow : BaseWindow
             }
             else
             {
-                entries.Add(new FileEntry { Name = "New folder", IsDirectory = true });
                 entries.Add(new FileEntry { Name = "..", IsDirectory = true });
                 entries.AddRange(Directory.GetDirectories(_currentDir)
                     .Select(d => new FileEntry { Name = Path.GetFileName(d), IsDirectory = true })
@@ -216,23 +154,14 @@ public class PathSelectorWindow : BaseWindow
         Console.WriteLine($"{_title}\n");
         Console.WriteLine($"Current path: {(!string.IsNullOrEmpty(_currentDir) ? _currentDir : "Drives")}");
 
-        if (_creatingNewFolder)
+        Console.CursorVisible = false;
+        // Vypíšeme komponenty bez opětovného vypisování titulku
+        for (int i = 0; i < _components.Count; i++)
         {
-            string inputPrompt = "New folder name: ";
-            string inputValue = _newFolderNameBuilder.ToString();
-            Console.WriteLine(inputPrompt + inputValue + "_");
-
-            Console.WriteLine("Chars/-._ : type, Backspace: del, Enter: create, Esc: cancel");
+            bool selected = i == _selectedIndex;
+            _components[i].Render(selected);
         }
-        else
-        {
-            Console.CursorVisible = false;
-            // Vypíšeme komponenty bez opětovného vypisování titulku
-            for (int i = 0; i < _components.Count; i++)
-            {
-                bool selected = i == _selectedIndex;
-                _components[i].Render(selected);
-            }
-        }
+        
+        
     }
 }
